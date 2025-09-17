@@ -15,17 +15,16 @@ public class EndpointRoute extends RouteBuilder {
 	@Value("${wait.time}")
 	private int waitTime;
 	
-	@Value("${url.backend}")
-	private String urlBackend;
+	@Value("${consumo.backend.url}")
+	private String consumoBackendUrl;
+
+    @Value("${consumo.backend.port}")
+    private int consumoBackendPort;
 
     @Override
     public void configure() throws Exception {
-        /*from("jetty:http://0.0.0.0:8081/consumobackend")
-            .routeId("json-endpoint-route")
-            .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-            .setBody(constant("{ \"mensagem\": \"Hello, world!\" }"));
-		*/
-        from("jetty:http://0.0.0.0:8081/consumobackend")
+
+        from("jetty:http://0.0.0.0:" + consumoBackendPort + "/consumobackend")
             .routeId("json-endpoint-route")
             .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
             .process(new Processor() {
@@ -34,7 +33,7 @@ public class EndpointRoute extends RouteBuilder {
                     RestTemplate restTemplate = new RestTemplate();
                     String responseApiContagem = null;
                     try {
-                        responseApiContagem = restTemplate.getForObject(urlBackend, String.class);
+                        responseApiContagem = restTemplate.getForObject(consumoBackendUrl, String.class);
                     } catch (Exception e) {
                         responseApiContagem = "Erro ao enviar requisição ao Back-End: " + e.getMessage();
                     }
