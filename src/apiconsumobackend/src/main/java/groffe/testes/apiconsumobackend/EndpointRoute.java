@@ -5,17 +5,17 @@ import java.util.UUID;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.opentelemetry.OpenTelemetryTracer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import io.opentelemetry.api.trace.Span;
+
 @Component
 public class EndpointRoute extends RouteBuilder {
 
-	@Value("${wait.time}")
-	private int waitTime;
-	
-	@Value("${consumo.backend.url}")
+    @Value("${consumo.backend.url}")
 	private String consumoBackendUrl;
 
     @Value("${consumo.backend.port}")
@@ -24,29 +24,35 @@ public class EndpointRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
+        OpenTelemetryTracer ott = new OpenTelemetryTracer();
+        ott.init(this.getContext());
+
         from("jetty:http://0.0.0.0:" + consumoBackendPort + "/consumobackend")
             .routeId("json-endpoint-route")
             .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
             .process(new Processor() {
                 @Override
                 public void process(Exchange exchange) throws Exception {
+                    System.out.println();
+                	System.out.println();
+                    System.out.println("***** Enviando requisicao... *****");
                     RestTemplate restTemplate = new RestTemplate();
-                    String responseApiContagem = null;
+                    String responseBackEnd = null;
                     try {
-                        responseApiContagem = restTemplate.getForObject(consumoBackendUrl, String.class);
+                        responseBackEnd = restTemplate.getForObject(consumoBackendUrl, String.class);
                     } catch (Exception e) {
-                        responseApiContagem = "Erro ao enviar requisição ao Back-End: " + e.getMessage();
+                        responseBackEnd = "Erro ao enviar requisição ao Back-End: " + e.getMessage();
                     }
+                    System.out.println("# Resposta do Back-End:");
+                    System.out.println(responseBackEnd);
 
-                    /*System.out.println();
+                    System.out.println();
                 	System.out.println();
                     System.out.println("Aguardando 50 milissegundos...");
 	            	Span spanTempoEspera = ott.getTracer().spanBuilder("TempoEspera").startSpan();                	
 	            	spanTempoEspera.setAttribute("tempo_inicio", System.currentTimeMillis());
-	            	spanTempoEspera.setAttribute("urlApiContagem", urlApiContagem);
-	            	spanTempoEspera.setAttribute("responseApiContagem", responseApiContagem);
-	            	spanTempoEspera.setAttribute("urlApiSaudacoes", urlApiSaudacoes);
-	            	spanTempoEspera.setAttribute("responseApiSaudacoes", responseApiSaudacoes);
+	            	spanTempoEspera.setAttribute("consumoBackendUrl", consumoBackendUrl);
+	            	spanTempoEspera.setAttribute("responseBackEnd", responseBackEnd);
 	            	Thread.sleep(50);
 	            	spanTempoEspera.setAttribute("tempo_termino", System.currentTimeMillis());
 	            	spanTempoEspera.end();
@@ -54,13 +60,11 @@ public class EndpointRoute extends RouteBuilder {
 
                 	System.out.println();
                 	System.out.println();
-                	*/
-
 
                     MensagemResponse resposta = new MensagemResponse(
 					    UUID.randomUUID().toString(),
 						"Ola mundo - Apache Camel + Spring!",
-						responseApiContagem);
+						responseBackEnd);
                     exchange.getIn().setBody(resposta);
                 }
             })

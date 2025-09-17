@@ -6,10 +6,35 @@
     "configurations": [
         {
             "type": "java",
-            "name": "ApiconsumobackendApplication",
+            "name": "OpenTelemetry Geral + Java",
             "request": "launch",
             "mainClass": "groffe.testes.apiconsumobackend.ApiconsumobackendApplication",
-            "projectName": "apiconsumobackend"
+            "projectName": "apiconsumobackend",
+            "vmArgs": "-javaagent:${workspaceFolder}/agents/opentelemetry-javaagent.jar",
+            "env": {
+                "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
+                "OTEL_EXPORTER_OTLP_TRACES_ENDPOINT": "http://localhost:4317",
+                "OTEL_LOGS_EXPORTER": "none",
+                "OTEL_METRICS_EXPORTER": "none",
+                "OTEL_SERVICE_NAME": "consumerspringcamel",
+                "OTEL_TRACES_EXPORTER": "otlp"
+            }
+        },
+        {
+            "type": "java",
+            "name": "Grafana + OpenTelemetry + Java",
+            "request": "launch",
+            "mainClass": "groffe.testes.apiconsumobackend.ApiconsumobackendApplication",
+            "projectName": "apiconsumobackend",
+            "vmArgs": "-javaagent:${workspaceFolder}/agents/grafana-opentelemetry-java.jar",
+            "env": {
+                "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
+                "OTEL_EXPORTER_OTLP_TRACES_ENDPOINT": "http://localhost:4317",
+                "OTEL_LOGS_EXPORTER": "none",
+                "OTEL_METRICS_EXPORTER": "none",
+                "OTEL_SERVICE_NAME": "consumerspringcamel",
+                "OTEL_TRACES_EXPORTER": "otlp"
+            }
         }
     ]
 }

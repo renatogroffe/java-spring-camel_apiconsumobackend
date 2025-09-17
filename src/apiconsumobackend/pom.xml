@@ -68,6 +68,12 @@
 			<artifactId>camel-jackson</artifactId>
 			<version>4.14.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-opentelemetry</artifactId>
+			<version>4.14.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
