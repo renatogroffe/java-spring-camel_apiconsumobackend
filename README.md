@@ -1,5 +1,5 @@
 # java-spring-camel_apiconsumobackend
-Exemplo de aplicação criada com Java + Spring + Apache Camel com implementação de distributed tracing com OpenTelemetry (configurando porta do OpenTelemetry Collector + comunicação via gRPC) e consumindo uma API REST genérica gratuita (Fed Treasury).
+Exemplo de aplicação criada com Java + Spring + Apache Camel com implementação de distributed tracing com OpenTelemetry (configurando porta do OpenTelemetry Collector + comunicação via gRPC) e consumindo uma API REST genérica gratuita (Fed Treasury). Para uso com ambientes empregados em testes de observabilidade e disponibilizados via Docker Compose.
 
 Saiba mais sobre a API Fed Treasury em: https://fiscaldata.treasury.gov/api-documentation/#getting-started
 
